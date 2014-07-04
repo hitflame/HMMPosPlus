@@ -2,6 +2,7 @@
 #define  _AHO_CORASICK_LITE_
 
 //#include <unordered_map>
+//#include <unordered_map>
 #include <map>
 #include <stdint.h>
 #include <fstream>
@@ -210,6 +211,7 @@ int main(int argc, char* argv[])
 	    return 0;
 	}
 
+
 	Trie trie;
 	time_t time_s, time_e;
 	time_s = clock();
@@ -229,7 +231,7 @@ int main(int argc, char* argv[])
 	time_s = clock();
     trie.matchTextFile(argv[2]);
     time_e = clock();
-    cout << " success in matchFile in " << (double)(time_e - time_s)/CLOCKS_PER_SEC <<  " total Null nodes : " << endl;
+    cout << " success in matchFile in " << (double)(time_e - time_s)/CLOCKS_PER_SEC << endl;
 
     getchar();
 	return 0;
