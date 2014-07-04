@@ -338,6 +338,10 @@ bool ShortPathSegment::matchTextFile(const char *textFilePath,   vector<string> 
      if ( ! ifs ) {
          return false;
      }
+
+     /*
+      * 将全文视为一条路径，对大文件分词内存消耗大
+      */
      string line, text;
 	 Unicode _unicode;
      while (getline(ifs, line, '\n')) {
