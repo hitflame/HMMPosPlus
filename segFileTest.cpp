@@ -1,6 +1,5 @@
 #ifndef  _AHO_CORASICK_LITE_
 #define  _AHO_CORASICK_LITE_
-
 //#include <unordered_map>
 //#include <unordered_map>
 #include <map>
@@ -13,65 +12,47 @@
 #include <list>
 #include <stack>
 #include <time.h>
-
 #include "TransCode.hpp"
-
 using namespace std;
 using namespace CppJieba;
 using namespace TransCode;
-
 typedef struct trie_node_s trie_node_t;
-
 #define MAX_UINT32 0xffffffff
-
 map< pair<int, int> , uint32_t > PathWeight;
-
 typedef map<uint16_t, trie_node_t*> NodeMap;
-
 struct trie_node_s
 {
 	int infoIndex;
 	NodeMap nextMap;
 	trie_node_t *search_clue;
-
 	trie_node_s() {
 		infoIndex = -1;
 		search_clue = NULL;
 	}
-
 };
-
-
 struct DAG_node
 {
     int prev;
     uint32_t Weight;
     bool visited;
     list<uint8_t> nextPos;
-
     friend bool operator< (DAG_node n1, DAG_node n2) {
           return n1.Weight > n2.Weight;
     }
-
     DAG_node() {
 		prev = -1;
 		Weight = MAX_UINT32;
 		visited = false;
     }
 };
-
 typedef vector<DAG_node> DAG;
-
 class Trie
 {
-
 private :
 	uint32_t size;
     vector<uint32_t> weightVect;
 	vector<uint8_t> lengthVect;
 	trie_node_t *root;
-
-
 public :
 	Trie();
 	bool insert(Unicode &_unicode);
@@ -81,13 +62,9 @@ public :
 	uint32_t getSize() const { return size; };
 	bool matchAll(const string &src, vector<string> &outVect);
 	bool generateDAG(Unicode &_unicode, DAG &_dag);
-
 public:
 	friend bool Dijkstra(DAG &_Dag);
-
 };
-
-
 inline uint32_t getPathWeight(const int &index,const int &step)
 {
     auto iter = PathWeight.find({index, step});
@@ -96,7 +73,6 @@ inline uint32_t getPathWeight(const int &index,const int &step)
     }
     return 0;
 }
-
 bool Dijkstra(DAG &_Dag)
 {
     priority_queue<vector<DAG_node>::iterator> _minHeap;
@@ -133,13 +109,9 @@ bool Dijkstra(DAG &_Dag)
                 next->visited = true;
              }
         }
-
     } while ( ! _minHeap.empty() );
     return true;
 }
-
-
-
 bool Trie::generateDAG(Unicode &_unicode, DAG &_dag)
 {
 	trie_node_t *node = root;
@@ -176,10 +148,8 @@ bool Trie::generateDAG(Unicode &_unicode, DAG &_dag)
     for (int i = 0;i < _dag.size(); i++) {
         _dag[i].prev = i -1;
     }
-
 	return true;
 }
-
 void printOutString(stack<string> &out)
 {
 	cout << endl << endl;
@@ -189,7 +159,6 @@ void printOutString(stack<string> &out)
      }
     cout << endl << endl;
 }
-
 bool decodeOutString(DAG &_dag, stack<string> &out, Unicode _unicode)
 {
 	int i, j = _dag.size()-1;
@@ -203,15 +172,12 @@ bool decodeOutString(DAG &_dag, stack<string> &out, Unicode _unicode)
 	}
     return true;
 }
-
 int main(int argc, char* argv[])
 {
 	if (argc < 3) {
 	    cout << "usage " << argv[0] << " dictfilePath textfilePath" << endl;
 	    return 0;
 	}
-
-
 	Trie trie;
 	time_t time_s, time_e;
 	time_s = clock();
@@ -219,31 +185,23 @@ int main(int argc, char* argv[])
 	time_e = clock();
 	cout << " success in loadDict in " << (double)(time_e - time_s)/CLOCKS_PER_SEC << endl;
 	cout << " insert " << trie.getSize() << " words" << endl;
-
 	cout << "begin build clue" << endl;
 	time_s = clock();
 	trie.buildClue();
 	time_e = clock();
 	cout << " success in build clue in " << (double)(time_e - time_s)/CLOCKS_PER_SEC << endl;
-
-	int total = 0;
-
 	time_s = clock();
     trie.matchTextFile(argv[2]);
     time_e = clock();
     cout << " success in matchFile in " << (double)(time_e - time_s)/CLOCKS_PER_SEC << endl;
-
     getchar();
 	return 0;
 }
-
 Trie::Trie()
 {
 	root = new trie_node_t;
 	size = 0;
 }
-
-
 bool Trie::loadDict(const char *filePath)
 {
 	ifstream ifs(filePath);
@@ -265,7 +223,6 @@ bool Trie::loadDict(const char *filePath)
 	ifs.close();
 	return true;
 }
-
 bool Trie::insert(Unicode &_unicode)
 {
 	trie_node_t *node = root;
@@ -286,8 +243,6 @@ bool Trie::insert(Unicode &_unicode)
 	node->infoIndex = size++;
 	return true;
 }
-
-
 bool Trie::matchAll(const string &src, vector<string> &outVect)
 {
 	trie_node_t *node = root;
@@ -323,7 +278,6 @@ bool Trie::matchAll(const string &src, vector<string> &outVect)
 	}
 	return true;
 }
-
 bool Trie::buildClue()
 {
 	queue<trie_node_t*> Queue;
@@ -362,7 +316,6 @@ bool Trie::buildClue()
 	}
 	return true;
 }
-
 void Trie::matchTextFile(const char *textFilePath)
 {
      ifstream ifs(textFilePath);
@@ -373,7 +326,6 @@ void Trie::matchTextFile(const char *textFilePath)
      while (getline(ifs, line, '\n')) {
            text += line;
      }
-    cout << text << endl;
     Unicode _unicode;
     stack<string> outString;
     decode(text, _unicode);
@@ -386,6 +338,4 @@ void Trie::matchTextFile(const char *textFilePath)
     decodeOutString(_dag, outString , _unicode);
     printOutString(outString);
 }
-
-
 #endif
