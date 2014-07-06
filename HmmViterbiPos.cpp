@@ -95,7 +95,7 @@ void segText(const char *dictPath, const char *destPath ,vector<string> &outStri
 	cout << " insert " << trie.getSize() << " words" << endl;
 
 	time_s = clock();
-    trie.matchTextFile(destPath, outString);
+    trie.matchTextFile(destPath, outString, "|");
     time_e = clock();
     cout << " success in matchFile in " << (double)(time_e - time_s)/CLOCKS_PER_SEC <<  endl;
     cout << "enter to continue\n";

@@ -60,18 +60,22 @@ private :
     bool buildClue();
     bool Dijkstra(vDAG &_Dag);
 	bool destroyTrie(trie_node_t *node);
-
+	bool genDAG(const Unicode &_unicode,vDAG &_dag);
+    string delimiter;
 
 public :
 	ShortPathSegment();
 	~ShortPathSegment();
 	bool insert(Unicode &_unicode);
 	bool loadDict(const char *filePath);
-	bool matchTextFile(const char *textFilePath, vector<string> &outString);
+	bool matchTextFile(const char *textFilePath, vector<string> &outString, const char *deli);
 	uint32_t getSize() const { return size; };
 	bool matchAll(const string &src, vector<string> &outVect);
-	bool generateDAG(const Unicode &_unicode,vDAG &_dag);
+//	bool genDAG(const Unicode &_unicode,vDAG &_dag);
+	bool setDelimiter(const char *deli)  { delimiter = deli; } ;
 	uint32_t getPathWeight(const int &index,const int &step);
+    void OutString2File(vector<string> &out, const char *filePath);
+    bool decodeOutString(const vDAG &_dag, const Unicode &_unicode, vector<string> &out);
 
 };
 
@@ -141,7 +145,7 @@ bool ShortPathSegment::Dijkstra(vDAG &_Dag)
 
 
 
-bool ShortPathSegment::generateDAG(const Unicode &_unicode,vDAG &_dag)
+bool ShortPathSegment::genDAG(const Unicode &_unicode,vDAG &_dag)
 {
 	trie_node_t *node = root;
 	uint16_t index;
@@ -181,29 +185,29 @@ bool ShortPathSegment::generateDAG(const Unicode &_unicode,vDAG &_dag)
 	return true;
 }
 
-void printOutString(vector<string> &out)
+void ShortPathSegment::OutString2File(vector<string> &out, const char *filePath)
 {
-	cout << endl << endl;
-	ofstream out_fs("outString.txt");
-	int i = 0, index = out.size()-1;
-	while (index--) {
-         out_fs << out[index] << " | " ;
-         if (!(++i %= 30)) out_fs << endl;
-     }
-     out_fs.close();
+	if (out.size() < 1) return;
+    ofstream out_fs(filePath);
+    if (!out_fs) return;
+    for (auto elem : out) {
+        out_fs << elem << endl;
+    }
+    out_fs.close();
 }
 
-bool decodeOutString(const vDAG &_dag, vector<string> &out, const Unicode &_unicode)
+bool ShortPathSegment::decodeOutString(const vDAG &_dag, const Unicode &_unicode, vector<string> &out)
 {
 	int i, j = _dag.size()-1;
 	auto begin = _unicode.begin();
-	string temp;
+	string text,  temp;
 	while (j > 0) {
 	     i = _dag[j].prev;
 	     encode(begin+i, begin+j, temp);
 	     j = i;
-	     out.push_back(temp);
+         text = temp + delimiter + text;
 	}
+    out.push_back( text  );
     return true;
 }
 
@@ -332,27 +336,26 @@ bool ShortPathSegment::buildClue()
 	return true;
 }
 
-bool ShortPathSegment::matchTextFile(const char *textFilePath,   vector<string> &outString)
+bool ShortPathSegment::matchTextFile(const char *textFilePath,   vector<string> &outString, const char *deli)
 {
      ifstream ifs(textFilePath);
      if ( ! ifs ) {
          return false;
      }
-
+     setDelimiter(deli);
      /*
-      * 将全文视为一条路径，对大文件分词内存消耗大
+      * 将一行文本视为路径进行分词
       */
-     string line, text;
-	 Unicode _unicode;
-     while (getline(ifs, line, '\n')) {
-           text += line;
-     }
-    decode(text, _unicode);
-	vDAG _dag(_unicode.size()+1);
-    generateDAG(_unicode, _dag);
-    Dijkstra(_dag);
-    decodeOutString(_dag, outString , _unicode);
-    printOutString(outString);
+    string line;
+    while (getline(ifs, line, '\n')) {
+        Unicode _unicode;
+        decode(line, _unicode);     // convernt words to Unicode
+        vDAG _dag( _unicode.size()+1 );
+        genDAG(_unicode, _dag);     // generate words' DAG
+        Dijkstra(_dag);             // compute shortest path
+        // decode Unicode to segment words and push to vector
+        decodeOutString( _dag,  _unicode, outString);
+    }
 	return true;
 }
 
