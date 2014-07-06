@@ -1,5 +1,5 @@
-#ifndef  TRIE_H_
-#define  TRIE_H_
+#ifndef  SHORTPATHSEGMENT_H_
+#define  SHORTPATHSEGMENT_H_
 
 #include <map>
 #include <stdint.h>
