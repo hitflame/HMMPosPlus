@@ -45,7 +45,7 @@ struct DAG_node
 		visited = false;
     }
 };
-typedef vector<DAG_node> DAG;
+typedef vector<DAG_node> vDAG;
 class Trie
 {
 private :
@@ -61,9 +61,9 @@ public :
 	bool buildClue();
 	uint32_t getSize() const { return size; };
 	bool matchAll(const string &src, vector<string> &outVect);
-	bool generateDAG(Unicode &_unicode, DAG &_dag);
+	bool genDAG(Unicode &_unicode, vDAG &_dag);
 public:
-	friend bool Dijkstra(DAG &_Dag);
+	friend bool Dijkstra(vDAG &_Dag);
 };
 inline uint32_t getPathWeight(const int &index,const int &step)
 {
@@ -73,7 +73,7 @@ inline uint32_t getPathWeight(const int &index,const int &step)
     }
     return 0;
 }
-bool Dijkstra(DAG &_Dag)
+bool Dijkstra(vDAG &_Dag)
 {
     priority_queue<vector<DAG_node>::iterator> _minHeap;
     auto loc = _Dag.begin();
@@ -112,7 +112,7 @@ bool Dijkstra(DAG &_Dag)
     } while ( ! _minHeap.empty() );
     return true;
 }
-bool Trie::generateDAG(Unicode &_unicode, DAG &_dag)
+bool Trie::genDAG(Unicode &_unicode, vDAG &_dag)
 {
 	trie_node_t *node = root;
 	uint16_t index;
@@ -150,26 +150,33 @@ bool Trie::generateDAG(Unicode &_unicode, DAG &_dag)
     }
 	return true;
 }
-void printOutString(stack<string> &out)
+void OutString2File(/* stack */ vector<string> &out)
 {
-	cout << endl << endl;
-	while (!out.empty()) {
-         cout << out.top() << " | " ;
+	ofstream outfile("outstring.txt");
+    if (!outfile) return;
+	/*while (!out.empty()) {
+         outfile << out.top() << " | " ;
          out.pop();
      }
-    cout << endl << endl;
+     */
+    for (auto elem : out) {
+        outfile << elem << endl;
+    }
+    outfile.close();
 }
-bool decodeOutString(DAG &_dag, stack<string> &out, Unicode _unicode)
+bool decodeOutString( vDAG &_dag, /* stack */vector<string> &out, Unicode _unicode)
 {
 	int i, j = _dag.size()-1;
 	auto begin = _unicode.begin();
-	string temp;
+	string text, temp;
 	while (j > 0) {
 	     i = _dag[j].prev;
 	     encode(begin+i, begin+j, temp);
 	     j = i;
-	     out.push(temp);
+	    text = temp + "|" + text;
+         // out.push(temp);
 	}
+    out.push_back(text);
     return true;
 }
 int main(int argc, char* argv[])
@@ -322,20 +329,23 @@ void Trie::matchTextFile(const char *textFilePath)
      if ( ! ifs ) {
          return;
      }
+     vector<string> outString;
      string line, text;
      while (getline(ifs, line, '\n')) {
-           text += line;
-     }
+           //text += line;
+    // }
     Unicode _unicode;
-    stack<string> outString;
-    decode(text, _unicode);
+    //stack<string> outString;
+    decode(line, _unicode);
     cout << " decode end\n";
-	DAG _dag(_unicode.size()+1);
-    generateDAG(_unicode, _dag);
-    cout << "generateDAG end\n";
+	vDAG _dag(_unicode.size()+1);
+    genDAG(_unicode, _dag);
+    cout << "genDAG end\n";
     Dijkstra(_dag);
     cout << "dijkstra end\n";
-    decodeOutString(_dag, outString , _unicode);
-    printOutString(outString);
+    decodeOutString( _dag  , outString , _unicode);
+
+     }
+    OutString2File(outString);
 }
 #endif
