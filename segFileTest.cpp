@@ -150,21 +150,17 @@ bool Trie::genDAG(Unicode &_unicode, vDAG &_dag)
     }
 	return true;
 }
-void OutString2File(/* stack */ vector<string> &out)
+void OutString2File(vector<string> &out)
 {
-	ofstream outfile("outstring.txt");
+	if (out.size() < 1) return;
+    ofstream outfile("outstring.txt");
     if (!outfile) return;
-	/*while (!out.empty()) {
-         outfile << out.top() << " | " ;
-         out.pop();
-     }
-     */
     for (auto elem : out) {
         outfile << elem << endl;
     }
     outfile.close();
 }
-bool decodeOutString( vDAG &_dag, /* stack */vector<string> &out, Unicode _unicode)
+bool decodeOutString( vDAG &_dag, vector<string> &out, Unicode _unicode)
 {
 	int i, j = _dag.size()-1;
 	auto begin = _unicode.begin();
@@ -174,7 +170,6 @@ bool decodeOutString( vDAG &_dag, /* stack */vector<string> &out, Unicode _unico
 	     encode(begin+i, begin+j, temp);
 	     j = i;
 	    text = temp + "|" + text;
-         // out.push(temp);
 	}
     out.push_back(text);
     return true;
@@ -330,22 +325,16 @@ void Trie::matchTextFile(const char *textFilePath)
          return;
      }
      vector<string> outString;
-     string line, text;
+     string line;
      while (getline(ifs, line, '\n')) {
-           //text += line;
-    // }
-    Unicode _unicode;
-    //stack<string> outString;
-    decode(line, _unicode);
-    cout << " decode end\n";
-	vDAG _dag(_unicode.size()+1);
-    genDAG(_unicode, _dag);
-    cout << "genDAG end\n";
-    Dijkstra(_dag);
-    cout << "dijkstra end\n";
-    decodeOutString( _dag  , outString , _unicode);
-
+            Unicode _unicode;
+            decode(line, _unicode);    // convert words to unicode
+        	vDAG _dag(_unicode.size()+1);
+            genDAG(_unicode, _dag);    // genrate words DAG
+            Dijkstra(_dag);            // compute shortest path
+            // decode unicode to segment words and push to vector
+            decodeOutString( _dag  , outString , _unicode);
      }
-    OutString2File(outString);
+     OutString2File(outString);
 }
 #endif
