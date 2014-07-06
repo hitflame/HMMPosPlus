@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/HmmPos.dir/HmmViterbiPos.o  -o HmmPos -rdynamic 

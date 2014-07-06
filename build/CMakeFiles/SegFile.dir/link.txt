@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/SegFile.dir/test/SegFileTest.o  -o SegFile -rdynamic 

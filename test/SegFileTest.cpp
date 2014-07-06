@@ -1,6 +1,8 @@
 
 #include "../ShortPathSegment.hpp"
 #include <iostream>
+#include <stdio.h>
+
 
 using namespace std;
 
@@ -20,7 +22,7 @@ int main(int argc, char* argv[])
 	segMan.loadDict(argv[1]);
 	time_e = clock();
 	cout << " success in loadDict in " 
-         << (double)(time_e - time_s)/CLOCKS_PER_SEC << endl;
+         << (double)(time_e - time_s)/CLOCKS_PER_SEC << "seconds" << endl;
 	cout << " insert " << segMan.getSize() << " words" << endl;
 
     vector<string> outString;
@@ -28,10 +30,9 @@ int main(int argc, char* argv[])
     segMan.matchTextFile(argv[2], outString, "|");
     time_e = clock();
     cout << " success in matchFile in " 
-         << (double)(time_e - time_s)/CLOCKS_PER_SEC << endl;
+         << (double)(time_e - time_s)/CLOCKS_PER_SEC << "seconds" << endl;
    
     segMan.OutString2File(outString, "out.txt");
-    cout << "enter to quit!" << endl;
-    getchar();
+    system("less out.txt");
 	return 0;
 }

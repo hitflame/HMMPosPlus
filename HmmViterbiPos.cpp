@@ -1,5 +1,5 @@
 
-#include "Trie.hpp"
+#include "ShortPathSegment.hpp"
 #include "TrainMan.hpp"
 #include <iostream>
 

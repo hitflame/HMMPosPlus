@@ -1,0 +1,2 @@
+/home/surfing/github/HMMPosPlus/build/CMakeFiles/HmmPos.dir
+/home/surfing/github/HMMPosPlus/build/CMakeFiles/SegFile.dir
