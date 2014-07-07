@@ -1,4 +1,4 @@
-PROJECT(c4jieba)
+PROJECT(HMMPosPlus)
 
 ADD_EXECUTABLE(HmmPos HmmViterbiPos.cpp)
 ADD_EXECUTABLE(SegFile test/SegFileTest.cpp)

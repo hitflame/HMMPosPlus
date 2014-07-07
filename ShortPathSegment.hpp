@@ -57,13 +57,15 @@ private :
 	vector<uint8_t> lengthVect;
 	map< pair<int, int> , uint32_t > PathWeight;
 	trie_node_t *root;
+    string delimiter;
+
+private :
     bool buildClue();
     bool Dijkstra(vDAG &_Dag);
 	uint32_t getPathWeight(const int &index,const int &step);
 	bool destroyTrie(trie_node_t *node);
     bool decodeOutString(const vDAG &_dag, const Unicode &_unicode, vector<string> &out);
 	bool genDAG(const Unicode &_unicode,vDAG &_dag);
-    string delimiter;
 
 public :
 	ShortPathSegment();
