@@ -16,6 +16,9 @@
 3、 To do:
    
     压缩 Aho-corasick算法的空间复杂度（未压缩空间为120M左右，无法接受！），
-    结合HMM和CRF分词,MMAP加载分词词典，多线程分词等。 
+    结合HMM和CRF分词,MMAP加载分词词典，多线程分词等。
+
+4、Thinks:
+    CppJieba的UTF8转换工具，和Jieba分词工具的启发。 
     
     
