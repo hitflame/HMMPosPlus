@@ -19,6 +19,6 @@
     结合HMM和CRF分词,MMAP加载分词词典，多线程分词等。
 
 4、Thinks:
-    CppJieba的UTF8转换工具，和Jieba分词工具的启发。 
+    CppJieba的UTF8转换工具，和Jieba分词的启发。 
     
     
